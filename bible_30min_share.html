@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111111">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="성경30분">
+<title>성경 1독 · 하루 30분 자기점검표</title>
+<style>
+  * { box-sizing: border-box; }
+  :root {
+    --bg:#f6f7f9; --card:#fff; --ink:#17191c; --muted:#6d737c;
+    --line:#e8eaee; --dark:#111; --soft:#f2f3f5; --green:#1f7a4d;
+  }
+  body {
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Pretendard","Noto Sans KR","Segoe UI",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  button,input { font:inherit; }
+  .app { max-width:720px; margin:0 auto; padding:18px 14px 48px; }
+  .hero {
+    background:#111; color:#fff; border-radius:20px; padding:20px; margin-bottom:14px;
+  }
+  .hero .eyebrow { font-size:11px; letter-spacing:.08em; font-weight:900; opacity:.58; margin-bottom:7px; }
+  .hero h1 { margin:0 0 8px; font-size:24px; line-height:1.25; }
+  .hero p { margin:0; opacity:.78; font-size:14px; line-height:1.6; }
+  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:16px; }
+  .stat { background:#232323; border-radius:12px; padding:10px 6px; text-align:center; }
+  .stat b { display:block; font-size:17px; }
+  .stat span { font-size:11px; opacity:.65; }
+
+  .card {
+    background:var(--card); border-radius:18px; padding:18px; margin-top:10px;
+    box-shadow:0 4px 18px rgba(0,0,0,.05);
+  }
+  .card-title { font-size:14px; font-weight:900; margin:0 0 12px; }
+  .progress-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .progress-box { background:#f5f6f7; border-radius:12px; padding:11px 8px; text-align:center; }
+  .progress-box b { display:block; font-size:17px; margin-bottom:2px; }
+  .progress-box span { font-size:11px; color:#777e87; }
+  .bar { height:8px; border-radius:99px; background:#eceef1; overflow:hidden; margin:12px 0 4px; }
+  .bar > i { display:block; height:100%; width:0; background:#111; border-radius:99px; transition:width .25s ease; }
+  .bar-label { font-size:11px; color:#7a818a; display:flex; justify-content:space-between; }
+  .go-next { width:100%; margin-top:12px; border:0; background:#111; color:#fff; padding:12px 14px; border-radius:12px; font-weight:850; cursor:pointer; }
+
+  .timer-card { padding:15px 16px; }
+  .timer-row { display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; }
+  .timer-label { font-size:12px; color:#737a83; font-weight:800; margin-bottom:2px; }
+  .timer { font-size:32px; line-height:1; font-weight:950; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
+  .timer-actions { display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end; }
+  .mini-btn { border:1px solid #d9dce1; background:#fff; color:#222; padding:9px 11px; border-radius:10px; font-size:12px; font-weight:800; cursor:pointer; }
+  .mini-btn.primary { background:#111; color:#fff; border-color:#111; }
+  .today-btn { width:100%; margin-top:10px; border:1px solid #d9dce1; background:#fff; padding:10px 12px; border-radius:11px; font-size:12px; font-weight:850; cursor:pointer; }
+  .today-btn.done { background:#e8f4ed; border-color:#b9dfc9; color:#17623f; }
+
+  .phase-title { font-size:14px; font-weight:900; margin:20px 4px 5px; display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
+  .phase-title small { color:#969ca4; font-size:11px; font-weight:750; }
+  .phase-subtitle { color:#777e87; font-size:11px; margin:0 4px 8px; line-height:1.4; }
+  .dates { display:flex; gap:8px; overflow-x:auto; padding:2px 1px 8px; scrollbar-width:none; }
+  .dates::-webkit-scrollbar { display:none; }
+  .date-btn {
+    position:relative; border:1px solid #d9dce1; background:#fff; color:#222;
+    padding:10px 12px; border-radius:12px; white-space:nowrap; font-size:13px; font-weight:800; cursor:pointer;
+  }
+  .date-btn.active { background:#111; color:#fff; border-color:#111; }
+  .date-btn.done:not(.active) { background:#eef6f1; color:#226443; border-color:#cce4d5; }
+  .date-btn.done::after { content:"✓"; margin-left:5px; font-size:10px; }
+
+  .badge { display:inline-block; padding:5px 8px; border-radius:999px; background:#eceff3; font-size:11px; font-weight:900; margin-bottom:8px; }
+  .detail h2 { margin:0 0 4px; font-size:21px; line-height:1.35; }
+  .date-line { color:#6d737c; font-size:13px; margin-bottom:14px; }
+  .reading-box { background:#111; color:#fff; border-radius:15px; padding:16px; margin:10px 0 14px; }
+  .reading-label { font-size:10px; font-weight:900; opacity:.58; letter-spacing:.08em; margin-bottom:5px; }
+  .reading-main { font-size:19px; line-height:1.45; font-weight:900; letter-spacing:-.02em; }
+  .reading-est { margin-top:8px; font-size:11px; opacity:.62; }
+  .section { padding:13px 0; border-top:1px solid #eceef1; }
+  .section:first-of-type { border-top:0; }
+  .section-name { font-weight:900; font-size:13px; margin-bottom:4px; }
+  .section-desc { font-size:13px; line-height:1.6; color:#555d67; }
+  .note { margin-top:12px; padding:13px; background:#f3f4f6; border-radius:12px; font-size:12px; line-height:1.6; color:#565d65; }
+
+  .completion {
+    display:grid; grid-template-columns:28px 1fr; gap:10px; align-items:start;
+    margin-top:14px; padding:14px; border-radius:13px; border:1px solid #e3e5e8; background:#fff;
+  }
+  .check { width:26px; height:26px; border:2px solid #b8bec7; border-radius:8px; display:flex; align-items:center; justify-content:center; cursor:pointer; user-select:none; font-weight:950; }
+  .check.done { background:#111; color:#fff; border-color:#111; }
+  .completion b { display:block; font-size:13px; margin-bottom:3px; }
+  .completion span { display:block; color:#6d737c; font-size:11px; line-height:1.45; }
+  .endpoint { margin-top:12px; }
+  .endpoint label { display:block; font-size:11px; color:#727982; font-weight:800; margin:0 0 5px 2px; }
+  .endpoint input { width:100%; border:1px solid #dfe2e6; background:#fafbfc; padding:11px 12px; border-radius:11px; outline:none; font-size:13px; }
+  .endpoint input:focus { border-color:#999fa7; background:#fff; }
+  .nav-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+  .nav-btn { border:1px solid #d9dce1; background:#fff; padding:11px 12px; border-radius:11px; font-weight:850; font-size:12px; cursor:pointer; }
+  .nav-btn:disabled { opacity:.35; cursor:default; }
+
+  .rule { background:#fff; border-radius:16px; margin-top:14px; padding:16px; font-size:13px; line-height:1.65; }
+  .rule b { display:block; margin-bottom:5px; }
+  .rule + .rule { margin-top:10px; }
+  .footnote { color:#777e87; font-size:11px; line-height:1.55; }
+  .footer { text-align:center; color:#8a9099; font-size:11px; margin-top:22px; line-height:1.55; }
+  .data-tools { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:10px; }
+  .tool-btn { border:1px solid #d9dce1; background:#fff; color:#222; padding:11px 8px; border-radius:11px; font-weight:850; font-size:12px; cursor:pointer; }
+  .install-card { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .install-copy { min-width:0; }
+  .install-copy b { display:block; font-size:13px; margin-bottom:4px; }
+  .install-copy span { display:block; color:#6d737c; font-size:11px; line-height:1.45; }
+  .install-btn { flex:none; border:0; background:#111; color:#fff; padding:11px 13px; border-radius:11px; font-size:12px; font-weight:850; cursor:pointer; }
+  .install-btn[hidden] { display:none; }
+  .toast { position:fixed; left:50%; bottom:24px; transform:translateX(-50%); background:#111; color:#fff; padding:10px 14px; border-radius:999px; font-size:12px; font-weight:800; opacity:0; pointer-events:none; transition:opacity .2s ease; z-index:20; max-width:calc(100vw - 28px); text-align:center; }
+  .toast.show { opacity:1; }
+
+  @media (max-width:390px) {
+    .hero h1 { font-size:22px; }
+    .reading-main { font-size:18px; }
+    .timer { font-size:29px; }
+    .timer-row { grid-template-columns:1fr; }
+    .timer-actions { justify-content:flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <section class="hero">
+    <div class="eyebrow">BIBLE READ-THROUGH</div>
+    <h1>성경 1독 · 하루 30분</h1>
+    <p>창세기부터 계시록까지 정경 순서로만 밀어붙이지 않고, 역사 흐름을 뼈대로 삼아 시가서·선지서·복음서·서신서를 같은 시대 맥락에 끼워 읽는 자기점검표입니다.</p>
+    <div class="stats">
+      <div class="stat"><b>30분</b><span>매일의 목표</span></div>
+      <div class="stat"><b>205회</b><span>표준 권장 범위</span></div>
+      <div class="stat"><b>66권</b><span>성경 전체 1독</span></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-title">진행 현황</div>
+    <div class="progress-grid">
+      <div class="progress-box"><b id="rangeCount">0/205</b><span>범위 완료</span></div>
+      <div class="progress-box"><b id="daysCount">0일</b><span>30분 실천</span></div>
+      <div class="progress-box"><b id="streakCount">0일</b><span>연속 기록</span></div>
+    </div>
+    <div class="bar"><i id="progressBar"></i></div>
+    <div class="bar-label"><span>성경 1독 진행률</span><span id="progressPct">0%</span></div>
+    <button class="go-next" id="nextIncomplete">다음 미완료 회차 열기</button>
+  </section>
+
+  <section class="card timer-card">
+    <div class="timer-row">
+      <div>
+        <div class="timer-label">오늘의 읽기 타이머</div>
+        <div class="timer" id="timerDisplay">30:00</div>
+      </div>
+      <div class="timer-actions">
+        <button class="mini-btn primary" id="timerStart">시작</button>
+        <button class="mini-btn" id="timerPause">일시정지</button>
+        <button class="mini-btn" id="timerReset">초기화</button>
+      </div>
+    </div>
+    <button class="today-btn" id="todayDone">오늘 30분 읽음</button>
+  </section>
+
+  <div id="calendar"></div>
+  <div id="detail"></div>
+
+  <section class="card install-card" id="installCard">
+    <div class="install-copy">
+      <b>홈 화면에 설치</b>
+      <span id="installHint">웹앱으로 설치하면 앱처럼 열리고 오프라인에서도 사용할 수 있습니다.</span>
+    </div>
+    <button class="install-btn" id="installBtn">설치</button>
+  </section>
+
+  <section class="card">
+    <div class="card-title">내 기록 보관</div>
+    <div class="footnote">체크·메모·30분 실천 기록은 이 기기에 저장됩니다. 휴대폰 교체나 브라우저 데이터 삭제에 대비해 가끔 백업해 두세요.</div>
+    <div class="data-tools">
+      <button class="tool-btn" id="exportData">백업 저장</button>
+      <button class="tool-btn" id="importData">백업 복원</button>
+      <button class="tool-btn" id="resetData">전체 초기화</button>
+    </div>
+    <input type="file" id="importFile" accept="application/json,.json" hidden>
+  </section>
+
+  <div class="rule">
+    <b>30분 규칙</b>
+    권장 범위는 평균적인 성인 묵독 속도를 기준으로 약 30분 안팎이 되도록 맞춘 참고선입니다. 번역본·장르·집중도에 따라 차이가 큽니다. <strong>30분이 되면 범위를 다 못 끝냈어도 그 지점을 기록하고 멈춰도 됩니다.</strong> 다음 읽기에서 그 지점부터 이어가세요. 반대로 일찍 끝나면 다음 회차를 이어 읽어 30분을 채웁니다.
+  </div>
+
+  <div class="rule">
+    <b>이 읽기 순서의 원리</b>
+    역사서로 시간의 뼈대를 먼저 세우고, 같은 시대의 시가서·예언서를 옆에 붙여 읽습니다. 신약은 네 복음서의 사건 흐름을 겹쳐 본 뒤, 사도행전의 선교 흐름 속에 바울서신 등을 배치했습니다. 공식 『어? 성경이 읽어지네!』 읽기표를 복제한 것이 아니라 그 접근 원리를 참고해 새로 구성한 계획입니다.
+  </div>
+
+  <div class="rule footnote">
+    <b>처음 7회는 속도 보정 기간</b>
+    계획보다 느리거나 빠른지 판단하지 말고 30분만 지켜보세요. 성경은 서사·율법·시·예언·서신의 난도가 달라 같은 장 수라도 읽는 시간이 달라집니다. 욥기·요엘·야고보서 등 일부 책의 역사적 배치는 학자들 사이에 견해 차이가 있으므로, 해당 회차에는 별도 메모를 표시했습니다.
+  </div>
+
+  <div class="footer">체크 상태, 실제 종료 지점, 30분 실천 기록과 타이머 상태는 이 기기에 자동 저장됩니다. 브라우저 데이터 삭제 시 기록도 지워질 수 있으므로 백업 기능을 권장합니다.</div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+const sessions = [{"id":1,"phase":1,"phaseTitle":"1. 시작과 족장","phaseSubtitle":"창조에서 애굽 이주까지","unit":"창조·타락·홍수·바벨","lens":"“누가 왕인가?”라는 질문으로 창조와 인간의 반역을 읽기","note":"","reading":"창세기 1–5","estimatedVerses":153,"estimatedMinutes":30},{"id":2,"phase":1,"phaseTitle":"1. 시작과 족장","phaseSubtitle":"창조에서 애굽 이주까지","unit":"창조·타락·홍수·바벨","lens":"“누가 왕인가?”라는 질문으로 창조와 인간의 반역을 읽기","note":"","reading":"창세기 6–11","estimatedVerses":184,"estimatedMinutes":36},{"id":3,"phase":1,"phaseTitle":"1. 시작과 족장","phaseSubtitle":"창조에서 애굽 이주까지","unit":"아브라함과 언약","lens":"땅·자손·복의 약속이 어떻게 시작되는지 보기","note":"","reading":"창세기 12–16","estimatedVerses":153,"estimatedMinutes":30},{"id":4,"phase":1,"phaseTitle":"1. 시작과 족장","phaseSubtitle":"창조에서 애굽 이주까지","unit":"아브라함과 언약","lens":"땅·자손·복의 약속이 어떻게 시작되는지 보기","note":"","reading":"창세기 17–21","estimatedVerses":153,"estimatedMinutes":30},{"id":5,"phase":1,"phaseTitle":"1. 시작과 족장","phaseSubtitle":"창조에서 애굽 이주까지","unit":"아브라함과 언약","lens":"땅·자손·복의 약속이 어떻게 시작되는지 보기","note":"","reading":"창세기 22–25","estimatedVerses":159,"estimatedMinutes":31},{"id":6,"phase":1,"phaseTitle":"1. 시작과 족장","phaseSubtitle":"창조에서 애굽 이주까지","unit":"욥의 질문","lens":"고난 속에서도 하나님이 누구신지 따라가기","note":"욥기의 정확한 역사적 연대는 논쟁이 있어 족장 시대 배치는 ‘읽기 흐름상’ 선택입니다.","reading":"욥기 1–6","estimatedVerses":153,"estimatedMinutes":30},{"id":7,"phase":1,"phaseTitle":"1. 시작과 족장","phaseSubtitle":"창조에서 애굽 이주까지","unit":"욥의 질문","lens":"고난 속에서도 하나님이 누구신지 따라가기","note":"욥기의 정확한 역사적 연대는 논쟁이 있어 족장 시대 배치는 ‘읽기 흐름상’ 선택입니다.","reading":"욥기 7–12","estimatedVerses":153,"estimatedMinutes":30},{"id":8,"phase":1,"phaseTitle":"1. 시작과 족장","phaseSubtitle":"창조에서 애굽 이주까지","unit":"욥의 질문","lens":"고난 속에서도 하나님이 누구신지 따라가기","note":"욥기의 정확한 역사적 연대는 논쟁이 있어 족장 시대 배치는 ‘읽기 흐름상’ 선택입니다.","reading":"욥기 13–18","estimatedVerses":153,"estimatedMinutes":30},{"id":9,"phase":1,"phaseTitle":"1. 시작과 족장","phaseSubtitle":"창조에서 애굽 이주까지","unit":"욥의 질문","lens":"고난 속에서도 하나님이 누구신지 따라가기","note":"욥기의 정확한 역사적 연대는 논쟁이 있어 족장 시대 배치는 ‘읽기 흐름상’ 선택입니다.","reading":"욥기 19–24","estimatedVerses":153,"estimatedMinutes":30},{"id":10,"phase":1,"phaseTitle":"1. 시작과 족장","phaseSubtitle":"창조에서 애굽 이주까지","unit":"욥의 질문","lens":"고난 속에서도 하나님이 누구신지 따라가기","note":"욥기의 정확한 역사적 연대는 논쟁이 있어 족장 시대 배치는 ‘읽기 흐름상’ 선택입니다.","reading":"욥기 25–30","estimatedVerses":153,"estimatedMinutes":30},{"id":11,"phase":1,"phaseTitle":"1. 시작과 족장","phaseSubtitle":"창조에서 애굽 이주까지","unit":"욥의 질문","lens":"고난 속에서도 하나님이 누구신지 따라가기","note":"욥기의 정확한 역사적 연대는 논쟁이 있어 족장 시대 배치는 ‘읽기 흐름상’ 선택입니다.","reading":"욥기 31–36","estimatedVerses":153,"estimatedMinutes":30},{"id":12,"phase":1,"phaseTitle":"1. 시작과 족장","phaseSubtitle":"창조에서 애굽 이주까지","unit":"욥의 질문","lens":"고난 속에서도 하나님이 누구신지 따라가기","note":"욥기의 정확한 역사적 연대는 논쟁이 있어 족장 시대 배치는 ‘읽기 흐름상’ 선택입니다.","reading":"욥기 37–42","estimatedVerses":153,"estimatedMinutes":30},{"id":13,"phase":1,"phaseTitle":"1. 시작과 족장","phaseSubtitle":"창조에서 애굽 이주까지","unit":"이삭과 야곱","lens":"약속이 완벽하지 않은 사람들을 통해 이어지는 과정 보기","note":"","reading":"창세기 26–30","estimatedVerses":153,"estimatedMinutes":30},{"id":14,"phase":1,"phaseTitle":"1. 시작과 족장","phaseSubtitle":"창조에서 애굽 이주까지","unit":"이삭과 야곱","lens":"약속이 완벽하지 않은 사람들을 통해 이어지는 과정 보기","note":"","reading":"창세기 31–36","estimatedVerses":184,"estimatedMinutes":36},{"id":15,"phase":1,"phaseTitle":"1. 시작과 족장","phaseSubtitle":"창조에서 애굽 이주까지","unit":"요셉과 애굽","lens":"가족의 위기가 출애굽 이야기의 무대가 되는 과정 보기","note":"","reading":"창세기 37–41","estimatedVerses":153,"estimatedMinutes":30},{"id":16,"phase":1,"phaseTitle":"1. 시작과 족장","phaseSubtitle":"창조에서 애굽 이주까지","unit":"요셉과 애굽","lens":"가족의 위기가 출애굽 이야기의 무대가 되는 과정 보기","note":"","reading":"창세기 42–45","estimatedVerses":123,"estimatedMinutes":24},{"id":17,"phase":1,"phaseTitle":"1. 시작과 족장","phaseSubtitle":"창조에서 애굽 이주까지","unit":"요셉과 애굽","lens":"가족의 위기가 출애굽 이야기의 무대가 되는 과정 보기","note":"","reading":"창세기 46–50","estimatedVerses":153,"estimatedMinutes":30},{"id":18,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"애굽에서 나온 백성","lens":"구원·유월절·홍해·광야 공급의 흐름 잡기","note":"","reading":"출애굽기 1–5","estimatedVerses":152,"estimatedMinutes":29},{"id":19,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"애굽에서 나온 백성","lens":"구원·유월절·홍해·광야 공급의 흐름 잡기","note":"","reading":"출애굽기 6–9","estimatedVerses":121,"estimatedMinutes":23},{"id":20,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"애굽에서 나온 백성","lens":"구원·유월절·홍해·광야 공급의 흐름 잡기","note":"","reading":"출애굽기 10–14","estimatedVerses":152,"estimatedMinutes":29},{"id":21,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"애굽에서 나온 백성","lens":"구원·유월절·홍해·광야 공급의 흐름 잡기","note":"","reading":"출애굽기 15–18","estimatedVerses":121,"estimatedMinutes":23},{"id":22,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"시내산과 성막","lens":"구원 이후 언약과 하나님의 임재가 중심이 되는 이유 보기","note":"","reading":"출애굽기 19–23","estimatedVerses":152,"estimatedMinutes":29},{"id":23,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"시내산과 성막","lens":"구원 이후 언약과 하나님의 임재가 중심이 되는 이유 보기","note":"","reading":"출애굽기 24–29","estimatedVerses":182,"estimatedMinutes":35},{"id":24,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"시내산과 성막","lens":"구원 이후 언약과 하나님의 임재가 중심이 되는 이유 보기","note":"","reading":"출애굽기 30–34","estimatedVerses":152,"estimatedMinutes":29},{"id":25,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"시내산과 성막","lens":"구원 이후 언약과 하나님의 임재가 중심이 되는 이유 보기","note":"","reading":"출애굽기 35–40","estimatedVerses":182,"estimatedMinutes":35},{"id":26,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"거룩과 제사","lens":"레위기를 규칙 모음보다 “거룩하신 하나님과 함께 사는 법”으로 읽기","note":"","reading":"레위기 1–4","estimatedVerses":127,"estimatedMinutes":25},{"id":27,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"거룩과 제사","lens":"레위기를 규칙 모음보다 “거룩하신 하나님과 함께 사는 법”으로 읽기","note":"","reading":"레위기 5–9","estimatedVerses":159,"estimatedMinutes":31},{"id":28,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"거룩과 제사","lens":"레위기를 규칙 모음보다 “거룩하신 하나님과 함께 사는 법”으로 읽기","note":"","reading":"레위기 10–13","estimatedVerses":127,"estimatedMinutes":25},{"id":29,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"거룩과 제사","lens":"레위기를 규칙 모음보다 “거룩하신 하나님과 함께 사는 법”으로 읽기","note":"","reading":"레위기 14–18","estimatedVerses":159,"estimatedMinutes":31},{"id":30,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"거룩과 제사","lens":"레위기를 규칙 모음보다 “거룩하신 하나님과 함께 사는 법”으로 읽기","note":"","reading":"레위기 19–22","estimatedVerses":127,"estimatedMinutes":25},{"id":31,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"거룩과 제사","lens":"레위기를 규칙 모음보다 “거룩하신 하나님과 함께 사는 법”으로 읽기","note":"","reading":"레위기 23–27","estimatedVerses":159,"estimatedMinutes":31},{"id":32,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"광야의 실패","lens":"불신앙이 공동체 전체에 어떤 결과를 낳는지 보기","note":"","reading":"민수기 1–4","estimatedVerses":143,"estimatedMinutes":28},{"id":33,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"광야의 실패","lens":"불신앙이 공동체 전체에 어떤 결과를 낳는지 보기","note":"","reading":"민수기 5–7","estimatedVerses":161,"estimatedMinutes":31},{"id":34,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"광야의 실패","lens":"불신앙이 공동체 전체에 어떤 결과를 낳는지 보기","note":"","reading":"민수기 8–11","estimatedVerses":143,"estimatedMinutes":28},{"id":35,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"광야의 실패","lens":"불신앙이 공동체 전체에 어떤 결과를 낳는지 보기","note":"","reading":"민수기 12–15","estimatedVerses":143,"estimatedMinutes":28},{"id":36,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"광야의 실패","lens":"불신앙이 공동체 전체에 어떤 결과를 낳는지 보기","note":"","reading":"민수기 16–20","estimatedVerses":179,"estimatedMinutes":35},{"id":37,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"새 세대의 준비","lens":"광야 2세대가 약속의 땅 앞에 다시 서는 과정 보기","note":"","reading":"민수기 21–24","estimatedVerses":143,"estimatedMinutes":28},{"id":38,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"새 세대의 준비","lens":"광야 2세대가 약속의 땅 앞에 다시 서는 과정 보기","note":"","reading":"민수기 25–28","estimatedVerses":143,"estimatedMinutes":28},{"id":39,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"새 세대의 준비","lens":"광야 2세대가 약속의 땅 앞에 다시 서는 과정 보기","note":"","reading":"민수기 29–32","estimatedVerses":143,"estimatedMinutes":28},{"id":40,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"새 세대의 준비","lens":"광야 2세대가 약속의 땅 앞에 다시 서는 과정 보기","note":"","reading":"민수기 33–36","estimatedVerses":143,"estimatedMinutes":28},{"id":41,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"모세의 마지막 설교","lens":"과거를 기억하고 언약을 선택하라는 요청에 집중하기","note":"","reading":"신명기 1–6","estimatedVerses":169,"estimatedMinutes":33},{"id":42,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"모세의 마지막 설교","lens":"과거를 기억하고 언약을 선택하라는 요청에 집중하기","note":"","reading":"신명기 7–12","estimatedVerses":169,"estimatedMinutes":33},{"id":43,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"모세의 마지막 설교","lens":"과거를 기억하고 언약을 선택하라는 요청에 집중하기","note":"","reading":"신명기 13–17","estimatedVerses":141,"estimatedMinutes":27},{"id":44,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"모세의 마지막 설교","lens":"과거를 기억하고 언약을 선택하라는 요청에 집중하기","note":"","reading":"신명기 18–23","estimatedVerses":169,"estimatedMinutes":33},{"id":45,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"모세의 마지막 설교","lens":"과거를 기억하고 언약을 선택하라는 요청에 집중하기","note":"","reading":"신명기 24–28","estimatedVerses":141,"estimatedMinutes":27},{"id":46,"phase":2,"phaseTitle":"2. 출애굽과 언약","phaseSubtitle":"구원받은 백성이 어떻게 살아야 하는가","unit":"모세의 마지막 설교","lens":"과거를 기억하고 언약을 선택하라는 요청에 집중하기","note":"","reading":"신명기 29–34","estimatedVerses":169,"estimatedMinutes":33},{"id":47,"phase":3,"phaseTitle":"3. 땅과 사사","phaseSubtitle":"정복·타협·반복되는 실패","unit":"약속의 땅으로","lens":"정복의 주체와 언약 순종의 관계 보기","note":"","reading":"여호수아 1–6","estimatedVerses":164,"estimatedMinutes":32},{"id":48,"phase":3,"phaseTitle":"3. 땅과 사사","phaseSubtitle":"정복·타협·반복되는 실패","unit":"약속의 땅으로","lens":"정복의 주체와 언약 순종의 관계 보기","note":"","reading":"여호수아 7–12","estimatedVerses":164,"estimatedMinutes":32},{"id":49,"phase":3,"phaseTitle":"3. 땅과 사사","phaseSubtitle":"정복·타협·반복되는 실패","unit":"약속의 땅으로","lens":"정복의 주체와 언약 순종의 관계 보기","note":"","reading":"여호수아 13–18","estimatedVerses":164,"estimatedMinutes":32},{"id":50,"phase":3,"phaseTitle":"3. 땅과 사사","phaseSubtitle":"정복·타협·반복되는 실패","unit":"약속의 땅으로","lens":"정복의 주체와 언약 순종의 관계 보기","note":"","reading":"여호수아 19–24","estimatedVerses":164,"estimatedMinutes":32},{"id":51,"phase":3,"phaseTitle":"3. 땅과 사사","phaseSubtitle":"정복·타협·반복되는 실패","unit":"사사의 악순환","lens":"배교→압제→부르짖음→구원의 반복과 점점 깊어지는 혼란 보기","note":"","reading":"사사기 1–5","estimatedVerses":147,"estimatedMinutes":28},{"id":52,"phase":3,"phaseTitle":"3. 땅과 사사","phaseSubtitle":"정복·타협·반복되는 실패","unit":"사사의 악순환","lens":"배교→압제→부르짖음→구원의 반복과 점점 깊어지는 혼란 보기","note":"","reading":"사사기 6–10","estimatedVerses":147,"estimatedMinutes":28},{"id":53,"phase":3,"phaseTitle":"3. 땅과 사사","phaseSubtitle":"정복·타협·반복되는 실패","unit":"사사의 악순환","lens":"배교→압제→부르짖음→구원의 반복과 점점 깊어지는 혼란 보기","note":"","reading":"사사기 11–16","estimatedVerses":177,"estimatedMinutes":34},{"id":54,"phase":3,"phaseTitle":"3. 땅과 사사","phaseSubtitle":"정복·타협·반복되는 실패","unit":"사사의 악순환","lens":"배교→압제→부르짖음→구원의 반복과 점점 깊어지는 혼란 보기","note":"","reading":"사사기 17–21","estimatedVerses":147,"estimatedMinutes":28},{"id":55,"phase":3,"phaseTitle":"3. 땅과 사사","phaseSubtitle":"정복·타협·반복되는 실패","unit":"사사 시대의 작은 이야기","lens":"혼란 속에서도 이어지는 신실함과 다윗 계보 보기","note":"","reading":"룻기 1–4","estimatedVerses":85,"estimatedMinutes":18},{"id":56,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"사무엘과 사울","lens":"이스라엘이 왕을 요구하는 이유와 사울의 실패 보기","note":"","reading":"사무엘상 1–5","estimatedVerses":131,"estimatedMinutes":25},{"id":57,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"사무엘과 사울","lens":"이스라엘이 왕을 요구하는 이유와 사울의 실패 보기","note":"","reading":"사무엘상 6–10","estimatedVerses":131,"estimatedMinutes":25},{"id":58,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"사무엘과 사울","lens":"이스라엘이 왕을 요구하는 이유와 사울의 실패 보기","note":"","reading":"사무엘상 11–15","estimatedVerses":131,"estimatedMinutes":25},{"id":59,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"다윗의 도피","lens":"왕이 되기 전 다윗의 선택과 하나님을 기다리는 시간 보기","note":"","reading":"사무엘상 16–20","estimatedVerses":131,"estimatedMinutes":25},{"id":60,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"다윗의 도피","lens":"왕이 되기 전 다윗의 선택과 하나님을 기다리는 시간 보기","note":"","reading":"사무엘상 21–25","estimatedVerses":131,"estimatedMinutes":25},{"id":61,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"다윗의 도피","lens":"왕이 되기 전 다윗의 선택과 하나님을 기다리는 시간 보기","note":"","reading":"사무엘상 26–31","estimatedVerses":157,"estimatedMinutes":30},{"id":62,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"다윗 왕국의 절정","lens":"예루살렘·언약·죄와 회복의 중심 사건 읽기","note":"","reading":"사무엘하 1–6","estimatedVerses":174,"estimatedMinutes":34},{"id":63,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"다윗 왕국의 절정","lens":"예루살렘·언약·죄와 회복의 중심 사건 읽기","note":"","reading":"사무엘하 7–12","estimatedVerses":174,"estimatedMinutes":34},{"id":64,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"다윗 집의 균열","lens":"죄의 후폭풍과 왕국 내부의 흔들림 보기","note":"","reading":"사무엘하 13–18","estimatedVerses":174,"estimatedMinutes":34},{"id":65,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"다윗 집의 균열","lens":"죄의 후폭풍과 왕국 내부의 흔들림 보기","note":"","reading":"사무엘하 19–24","estimatedVerses":174,"estimatedMinutes":34},{"id":66,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"역대기의 렌즈","lens":"같은 역사를 성전·예배·다윗 왕조 관점에서 다시 보기","note":"","reading":"역대상 1–5","estimatedVerses":162,"estimatedMinutes":31},{"id":67,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"역대기의 렌즈","lens":"같은 역사를 성전·예배·다윗 왕조 관점에서 다시 보기","note":"","reading":"역대상 6–10","estimatedVerses":162,"estimatedMinutes":31},{"id":68,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"역대기의 렌즈","lens":"같은 역사를 성전·예배·다윗 왕조 관점에서 다시 보기","note":"","reading":"역대상 11–15","estimatedVerses":162,"estimatedMinutes":31},{"id":69,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"역대기의 렌즈","lens":"같은 역사를 성전·예배·다윗 왕조 관점에서 다시 보기","note":"","reading":"역대상 16–20","estimatedVerses":162,"estimatedMinutes":31},{"id":70,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"역대기의 렌즈","lens":"같은 역사를 성전·예배·다윗 왕조 관점에서 다시 보기","note":"","reading":"역대상 21–24","estimatedVerses":130,"estimatedMinutes":25},{"id":71,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"역대기의 렌즈","lens":"같은 역사를 성전·예배·다윗 왕조 관점에서 다시 보기","note":"","reading":"역대상 25–29","estimatedVerses":162,"estimatedMinutes":31},{"id":72,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"시편 1권","lens":"다윗 이야기 뒤에서 탄식·신뢰·왕권의 언어로 읽기","note":"시편의 배치는 저작 연대를 단정한 것이 아니라, 역사 흐름과 함께 읽기 위한 편집적 배치입니다.","reading":"시편 1–10","estimatedVerses":164,"estimatedMinutes":32},{"id":73,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"시편 1권","lens":"다윗 이야기 뒤에서 탄식·신뢰·왕권의 언어로 읽기","note":"시편의 배치는 저작 연대를 단정한 것이 아니라, 역사 흐름과 함께 읽기 위한 편집적 배치입니다.","reading":"시편 11–20","estimatedVerses":164,"estimatedMinutes":32},{"id":74,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"시편 1권","lens":"다윗 이야기 뒤에서 탄식·신뢰·왕권의 언어로 읽기","note":"시편의 배치는 저작 연대를 단정한 것이 아니라, 역사 흐름과 함께 읽기 위한 편집적 배치입니다.","reading":"시편 21–30","estimatedVerses":164,"estimatedMinutes":32},{"id":75,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"시편 1권","lens":"다윗 이야기 뒤에서 탄식·신뢰·왕권의 언어로 읽기","note":"시편의 배치는 저작 연대를 단정한 것이 아니라, 역사 흐름과 함께 읽기 위한 편집적 배치입니다.","reading":"시편 31–41","estimatedVerses":180,"estimatedMinutes":35},{"id":76,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"시편 2권","lens":"왕과 공동체의 기도, 성소에 대한 갈망을 이어 읽기","note":"","reading":"시편 42–51","estimatedVerses":164,"estimatedMinutes":32},{"id":77,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"시편 2권","lens":"왕과 공동체의 기도, 성소에 대한 갈망을 이어 읽기","note":"","reading":"시편 52–61","estimatedVerses":164,"estimatedMinutes":32},{"id":78,"phase":4,"phaseTitle":"4. 사무엘·사울·다윗","phaseSubtitle":"왕정의 시작과 다윗 언약","unit":"시편 2권","lens":"왕과 공동체의 기도, 성소에 대한 갈망을 이어 읽기","note":"","reading":"시편 62–72","estimatedVerses":180,"estimatedMinutes":35},{"id":79,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"솔로몬과 성전","lens":"지혜·성전·부요함 속에서 시작된 왕국이 왜 흔들리는지 보기","note":"","reading":"열왕기상 1–4","estimatedVerses":148,"estimatedMinutes":29},{"id":80,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"솔로몬과 성전","lens":"지혜·성전·부요함 속에서 시작된 왕국이 왜 흔들리는지 보기","note":"","reading":"열왕기상 5–8","estimatedVerses":177,"estimatedMinutes":34},{"id":81,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"솔로몬과 성전","lens":"지혜·성전·부요함 속에서 시작된 왕국이 왜 흔들리는지 보기","note":"","reading":"열왕기상 9–11 · 역대하 1–2","estimatedVerses":157,"estimatedMinutes":30},{"id":82,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"솔로몬과 성전","lens":"지혜·성전·부요함 속에서 시작된 왕국이 왜 흔들리는지 보기","note":"","reading":"역대하 3–9","estimatedVerses":160,"estimatedMinutes":31},{"id":83,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"잠언","lens":"지혜를 지식이 아니라 하나님 경외에서 출발하는 삶의 기술로 읽기","note":"","reading":"잠언 1–5","estimatedVerses":148,"estimatedMinutes":29},{"id":84,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"잠언","lens":"지혜를 지식이 아니라 하나님 경외에서 출발하는 삶의 기술로 읽기","note":"","reading":"잠언 6–10","estimatedVerses":148,"estimatedMinutes":29},{"id":85,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"잠언","lens":"지혜를 지식이 아니라 하나님 경외에서 출발하는 삶의 기술로 읽기","note":"","reading":"잠언 11–15","estimatedVerses":148,"estimatedMinutes":29},{"id":86,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"잠언","lens":"지혜를 지식이 아니라 하나님 경외에서 출발하는 삶의 기술로 읽기","note":"","reading":"잠언 16–20","estimatedVerses":148,"estimatedMinutes":29},{"id":87,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"잠언","lens":"지혜를 지식이 아니라 하나님 경외에서 출발하는 삶의 기술로 읽기","note":"","reading":"잠언 21–26","estimatedVerses":177,"estimatedMinutes":34},{"id":88,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"잠언","lens":"지혜를 지식이 아니라 하나님 경외에서 출발하는 삶의 기술로 읽기","note":"","reading":"잠언 27–31","estimatedVerses":148,"estimatedMinutes":29},{"id":89,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"전도서와 아가","lens":"삶의 한계와 사랑의 언어를 지혜문학의 다른 목소리로 읽기","note":"","reading":"전도서 1–9","estimatedVerses":166,"estimatedMinutes":32},{"id":90,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"전도서와 아가","lens":"삶의 한계와 사랑의 언어를 지혜문학의 다른 목소리로 읽기","note":"","reading":"전도서 10–12 · 아가 1–8","estimatedVerses":172,"estimatedMinutes":33},{"id":91,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"왕국의 분열","lens":"북이스라엘·남유다로 갈라지는 원인과 반복되는 왕 평가 보기","note":"","reading":"열왕기상 12–15","estimatedVerses":148,"estimatedMinutes":29},{"id":92,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"왕국의 분열","lens":"북이스라엘·남유다로 갈라지는 원인과 반복되는 왕 평가 보기","note":"","reading":"열왕기상 16–20","estimatedVerses":185,"estimatedMinutes":36},{"id":93,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"왕국의 분열","lens":"북이스라엘·남유다로 갈라지는 원인과 반복되는 왕 평가 보기","note":"","reading":"열왕기상 21–22 · 역대하 10–13","estimatedVerses":166,"estimatedMinutes":32},{"id":94,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"왕국의 분열","lens":"북이스라엘·남유다로 갈라지는 원인과 반복되는 왕 평가 보기","note":"","reading":"역대하 14–20","estimatedVerses":160,"estimatedMinutes":31},{"id":95,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"시편 3권","lens":"왕국과 성전이 흔들릴 때 공동체가 던지는 질문으로 읽기","note":"","reading":"시편 73–80","estimatedVerses":131,"estimatedMinutes":25},{"id":96,"phase":5,"phaseTitle":"5. 솔로몬과 분열","phaseSubtitle":"지혜의 절정에서 왕국 분열로","unit":"시편 3권","lens":"왕국과 성전이 흔들릴 때 공동체가 던지는 질문으로 읽기","note":"","reading":"시편 81–89","estimatedVerses":148,"estimatedMinutes":29},{"id":97,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"북왕국의 추락","lens":"왕하의 사건과 대하의 유다 시선을 나란히 보며 흐름 잡기","note":"","reading":"열왕기하 1–6","estimatedVerses":173,"estimatedMinutes":33},{"id":98,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"북왕국의 추락","lens":"왕하의 사건과 대하의 유다 시선을 나란히 보며 흐름 잡기","note":"","reading":"열왕기하 7–12","estimatedVerses":173,"estimatedMinutes":33},{"id":99,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"북왕국의 추락","lens":"왕하의 사건과 대하의 유다 시선을 나란히 보며 흐름 잡기","note":"","reading":"열왕기하 13–17 · 역대하 21","estimatedVerses":167,"estimatedMinutes":32},{"id":100,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"북왕국의 추락","lens":"왕하의 사건과 대하의 유다 시선을 나란히 보며 흐름 잡기","note":"","reading":"역대하 22–28","estimatedVerses":160,"estimatedMinutes":31},{"id":101,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"북왕국을 향한 경고","lens":"하나님의 긍휼·정의·언약적 사랑이 무엇을 요구하는지 보기","note":"","reading":"요나 1–4 · 아모스 1–5","estimatedVerses":129,"estimatedMinutes":25},{"id":102,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"북왕국을 향한 경고","lens":"하나님의 긍휼·정의·언약적 사랑이 무엇을 요구하는지 보기","note":"","reading":"아모스 6–9 · 호세아 1–5","estimatedVerses":135,"estimatedMinutes":26},{"id":103,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"북왕국을 향한 경고","lens":"하나님의 긍휼·정의·언약적 사랑이 무엇을 요구하는지 보기","note":"","reading":"호세아 6–14","estimatedVerses":127,"estimatedMinutes":25},{"id":104,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"히스기야와 앗수르","lens":"국가 위기 속 신뢰와 개혁의 의미 보기","note":"","reading":"열왕기하 18–20 · 역대하 29–32","estimatedVerses":178,"estimatedMinutes":34},{"id":105,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"이사야·미가: 심판과 거룩","lens":"정치 위기보다 더 깊은 죄와 하나님의 거룩함 보기","note":"","reading":"이사야 1–7","estimatedVerses":137,"estimatedMinutes":27},{"id":106,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"이사야·미가: 심판과 거룩","lens":"정치 위기보다 더 깊은 죄와 하나님의 거룩함 보기","note":"","reading":"이사야 8–14","estimatedVerses":137,"estimatedMinutes":27},{"id":107,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"이사야·미가: 심판과 거룩","lens":"정치 위기보다 더 깊은 죄와 하나님의 거룩함 보기","note":"","reading":"이사야 15–22","estimatedVerses":157,"estimatedMinutes":30},{"id":108,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"이사야·미가: 심판과 거룩","lens":"정치 위기보다 더 깊은 죄와 하나님의 거룩함 보기","note":"","reading":"이사야 23–29","estimatedVerses":137,"estimatedMinutes":27},{"id":109,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"이사야·미가: 심판과 거룩","lens":"정치 위기보다 더 깊은 죄와 하나님의 거룩함 보기","note":"","reading":"이사야 30–37","estimatedVerses":157,"estimatedMinutes":30},{"id":110,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"이사야·미가: 심판과 거룩","lens":"정치 위기보다 더 깊은 죄와 하나님의 거룩함 보기","note":"","reading":"이사야 38–39 · 미가 1–7","estimatedVerses":144,"estimatedMinutes":28},{"id":111,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"이사야: 위로와 새 창조","lens":"포로와 귀환을 넘어서는 회복·종·새 창조의 소망 보기","note":"","reading":"이사야 40–48","estimatedVerses":176,"estimatedMinutes":34},{"id":112,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"이사야: 위로와 새 창조","lens":"포로와 귀환을 넘어서는 회복·종·새 창조의 소망 보기","note":"","reading":"이사야 49–57","estimatedVerses":176,"estimatedMinutes":34},{"id":113,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"이사야: 위로와 새 창조","lens":"포로와 귀환을 넘어서는 회복·종·새 창조의 소망 보기","note":"","reading":"이사야 58–66","estimatedVerses":176,"estimatedMinutes":34},{"id":114,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"요엘","lens":"“여호와의 날”과 회개·성령 약속의 흐름 보기","note":"요엘의 정확한 연대는 학자들 사이에 견해 차이가 있어 여기서는 주제 흐름상 배치했습니다.","reading":"요엘 1–3","estimatedVerses":73,"estimatedMinutes":18},{"id":115,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"유다의 마지막 왕들","lens":"개혁 뒤에도 멈추지 않는 붕괴와 예루살렘 멸망까지 보기","note":"","reading":"열왕기하 21–24","estimatedVerses":115,"estimatedMinutes":22},{"id":116,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"유다의 마지막 왕들","lens":"개혁 뒤에도 멈추지 않는 붕괴와 예루살렘 멸망까지 보기","note":"","reading":"열왕기하 25 · 역대하 33–36","estimatedVerses":120,"estimatedMinutes":23},{"id":117,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"멸망 직전의 선지자들","lens":"제국의 심판과 “의인은 믿음으로”라는 긴장을 읽기","note":"","reading":"나훔 1–3 · 스바냐 1–3 · 하박국 1–3","estimatedVerses":156,"estimatedMinutes":30},{"id":118,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"예레미야: 무너지는 시대","lens":"언약 파기·거짓 안전감·돌아오라는 호소에 집중하기","note":"","reading":"예레미야 1–6","estimatedVerses":157,"estimatedMinutes":30},{"id":119,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"예레미야: 무너지는 시대","lens":"언약 파기·거짓 안전감·돌아오라는 호소에 집중하기","note":"","reading":"예레미야 7–12","estimatedVerses":157,"estimatedMinutes":30},{"id":120,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"예레미야: 무너지는 시대","lens":"언약 파기·거짓 안전감·돌아오라는 호소에 집중하기","note":"","reading":"예레미야 13–18","estimatedVerses":157,"estimatedMinutes":30},{"id":121,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"예레미야: 무너지는 시대","lens":"언약 파기·거짓 안전감·돌아오라는 호소에 집중하기","note":"","reading":"예레미야 19–23","estimatedVerses":131,"estimatedMinutes":25},{"id":122,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"예레미야: 무너지는 시대","lens":"언약 파기·거짓 안전감·돌아오라는 호소에 집중하기","note":"","reading":"예레미야 24–29","estimatedVerses":157,"estimatedMinutes":30},{"id":123,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"예레미야: 새 언약과 멸망","lens":"새 언약의 약속과 실제 멸망의 비극을 함께 읽기","note":"","reading":"예레미야 30–35","estimatedVerses":157,"estimatedMinutes":30},{"id":124,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"예레미야: 새 언약과 멸망","lens":"새 언약의 약속과 실제 멸망의 비극을 함께 읽기","note":"","reading":"예레미야 36–41","estimatedVerses":157,"estimatedMinutes":30},{"id":125,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"예레미야: 새 언약과 멸망","lens":"새 언약의 약속과 실제 멸망의 비극을 함께 읽기","note":"","reading":"예레미야 42–47","estimatedVerses":157,"estimatedMinutes":30},{"id":126,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"예레미야: 새 언약과 멸망","lens":"새 언약의 약속과 실제 멸망의 비극을 함께 읽기","note":"","reading":"예레미야 48–52 · 예레미야애가 1","estimatedVerses":162,"estimatedMinutes":31},{"id":127,"phase":6,"phaseTitle":"6. 분열왕국과 선지자","phaseSubtitle":"왕의 기록 옆에 선지자의 해석을 끼워 읽기","unit":"예레미야: 새 언약과 멸망","lens":"새 언약의 약속과 실제 멸망의 비극을 함께 읽기","note":"","reading":"예레미야애가 2–5 · 오바댜 1","estimatedVerses":144,"estimatedMinutes":28},{"id":128,"phase":7,"phaseTitle":"7. 포로기","phaseSubtitle":"성전과 땅을 잃은 뒤에도 하나님은 왕이신가","unit":"에스겔: 심판","lens":"떠나는 영광, 책임, 우상숭배를 통해 포로의 원인을 보기","note":"","reading":"에스겔 1–6","estimatedVerses":159,"estimatedMinutes":31},{"id":129,"phase":7,"phaseTitle":"7. 포로기","phaseSubtitle":"성전과 땅을 잃은 뒤에도 하나님은 왕이신가","unit":"에스겔: 심판","lens":"떠나는 영광, 책임, 우상숭배를 통해 포로의 원인을 보기","note":"","reading":"에스겔 7–12","estimatedVerses":159,"estimatedMinutes":31},{"id":130,"phase":7,"phaseTitle":"7. 포로기","phaseSubtitle":"성전과 땅을 잃은 뒤에도 하나님은 왕이신가","unit":"에스겔: 심판","lens":"떠나는 영광, 책임, 우상숭배를 통해 포로의 원인을 보기","note":"","reading":"에스겔 13–18","estimatedVerses":159,"estimatedMinutes":31},{"id":131,"phase":7,"phaseTitle":"7. 포로기","phaseSubtitle":"성전과 땅을 잃은 뒤에도 하나님은 왕이신가","unit":"에스겔: 심판","lens":"떠나는 영광, 책임, 우상숭배를 통해 포로의 원인을 보기","note":"","reading":"에스겔 19–24","estimatedVerses":159,"estimatedMinutes":31},{"id":132,"phase":7,"phaseTitle":"7. 포로기","phaseSubtitle":"성전과 땅을 잃은 뒤에도 하나님은 왕이신가","unit":"에스겔: 회복","lens":"새 마음·새 영·마른 뼈·새 성전의 회복 이미지를 따라가기","note":"","reading":"에스겔 25–30","estimatedVerses":159,"estimatedMinutes":31},{"id":133,"phase":7,"phaseTitle":"7. 포로기","phaseSubtitle":"성전과 땅을 잃은 뒤에도 하나님은 왕이신가","unit":"에스겔: 회복","lens":"새 마음·새 영·마른 뼈·새 성전의 회복 이미지를 따라가기","note":"","reading":"에스겔 31–36","estimatedVerses":159,"estimatedMinutes":31},{"id":134,"phase":7,"phaseTitle":"7. 포로기","phaseSubtitle":"성전과 땅을 잃은 뒤에도 하나님은 왕이신가","unit":"에스겔: 회복","lens":"새 마음·새 영·마른 뼈·새 성전의 회복 이미지를 따라가기","note":"","reading":"에스겔 37–42","estimatedVerses":159,"estimatedMinutes":31},{"id":135,"phase":7,"phaseTitle":"7. 포로기","phaseSubtitle":"성전과 땅을 잃은 뒤에도 하나님은 왕이신가","unit":"에스겔: 회복","lens":"새 마음·새 영·마른 뼈·새 성전의 회복 이미지를 따라가기","note":"","reading":"에스겔 43–48","estimatedVerses":159,"estimatedMinutes":31},{"id":136,"phase":7,"phaseTitle":"7. 포로기","phaseSubtitle":"성전과 땅을 잃은 뒤에도 하나님은 왕이신가","unit":"다니엘","lens":"제국 한가운데서 하나님의 주권과 신실함 보기","note":"","reading":"다니엘 1–6","estimatedVerses":178,"estimatedMinutes":35},{"id":137,"phase":7,"phaseTitle":"7. 포로기","phaseSubtitle":"성전과 땅을 잃은 뒤에도 하나님은 왕이신가","unit":"다니엘","lens":"제국 한가운데서 하나님의 주권과 신실함 보기","note":"","reading":"다니엘 7–12","estimatedVerses":178,"estimatedMinutes":35},{"id":138,"phase":7,"phaseTitle":"7. 포로기","phaseSubtitle":"성전과 땅을 잃은 뒤에도 하나님은 왕이신가","unit":"시편 4권","lens":"무너진 왕국 이후 “주께서 왕이시다”라는 고백으로 읽기","note":"","reading":"시편 90–97","estimatedVerses":131,"estimatedMinutes":25},{"id":139,"phase":7,"phaseTitle":"7. 포로기","phaseSubtitle":"성전과 땅을 잃은 뒤에도 하나님은 왕이신가","unit":"시편 4권","lens":"무너진 왕국 이후 “주께서 왕이시다”라는 고백으로 읽기","note":"","reading":"시편 98–106","estimatedVerses":148,"estimatedMinutes":29},{"id":140,"phase":8,"phaseTitle":"8. 귀환과 재건","phaseSubtitle":"성전·성벽·말씀을 다시 세우다","unit":"성전 재건","lens":"귀환이 끝이 아니라 예배 공동체를 다시 세우는 시작임을 보기","note":"","reading":"에스라 1–6","estimatedVerses":168,"estimatedMinutes":33},{"id":141,"phase":8,"phaseTitle":"8. 귀환과 재건","phaseSubtitle":"성전·성벽·말씀을 다시 세우다","unit":"성전 재건","lens":"귀환이 끝이 아니라 예배 공동체를 다시 세우는 시작임을 보기","note":"","reading":"학개 1–2 · 스가랴 1–8","estimatedVerses":159,"estimatedMinutes":31},{"id":142,"phase":8,"phaseTitle":"8. 귀환과 재건","phaseSubtitle":"성전·성벽·말씀을 다시 세우다","unit":"스가랴의 소망","lens":"재건 현실을 넘어 왕과 메시아적 소망이 어떻게 확장되는지 보기","note":"","reading":"스가랴 9–14","estimatedVerses":90,"estimatedMinutes":18},{"id":143,"phase":8,"phaseTitle":"8. 귀환과 재건","phaseSubtitle":"성전·성벽·말씀을 다시 세우다","unit":"에스더","lens":"귀환하지 않은 유대인 공동체에서 보이지 않는 섭리 읽기","note":"","reading":"에스더 1–10","estimatedVerses":167,"estimatedMinutes":32},{"id":144,"phase":8,"phaseTitle":"8. 귀환과 재건","phaseSubtitle":"성전·성벽·말씀을 다시 세우다","unit":"말씀과 성벽","lens":"에스라의 말씀 개혁과 느헤미야의 공동체 재건을 이어 보기","note":"","reading":"에스라 7–10 · 느헤미야 1–2","estimatedVerses":174,"estimatedMinutes":34},{"id":145,"phase":8,"phaseTitle":"8. 귀환과 재건","phaseSubtitle":"성전·성벽·말씀을 다시 세우다","unit":"말씀과 성벽","lens":"에스라의 말씀 개혁과 느헤미야의 공동체 재건을 이어 보기","note":"","reading":"느헤미야 3–7","estimatedVerses":156,"estimatedMinutes":30},{"id":146,"phase":8,"phaseTitle":"8. 귀환과 재건","phaseSubtitle":"성전·성벽·말씀을 다시 세우다","unit":"말씀과 성벽","lens":"에스라의 말씀 개혁과 느헤미야의 공동체 재건을 이어 보기","note":"","reading":"느헤미야 8–13","estimatedVerses":187,"estimatedMinutes":36},{"id":147,"phase":8,"phaseTitle":"8. 귀환과 재건","phaseSubtitle":"성전·성벽·말씀을 다시 세우다","unit":"말라기","lens":"성전은 재건됐지만 마음은 식어버린 공동체를 향한 마지막 경고 읽기","note":"","reading":"말라기 1–4","estimatedVerses":55,"estimatedMinutes":18},{"id":148,"phase":8,"phaseTitle":"8. 귀환과 재건","phaseSubtitle":"성전·성벽·말씀을 다시 세우다","unit":"시편 5권: 감사와 귀환","lens":"구원받은 공동체의 감사와 순례의 언어로 읽기","note":"","reading":"시편 107–118","estimatedVerses":197,"estimatedMinutes":38},{"id":149,"phase":8,"phaseTitle":"8. 귀환과 재건","phaseSubtitle":"성전·성벽·말씀을 다시 세우다","unit":"시편 119","lens":"말씀 자체를 사랑하고 붙드는 긴 묵상을 한 회차의 중심으로 읽기","note":"","reading":"시편 119","estimatedVerses":176,"estimatedMinutes":34},{"id":150,"phase":8,"phaseTitle":"8. 귀환과 재건","phaseSubtitle":"성전·성벽·말씀을 다시 세우다","unit":"시편 5권: 성전에 오르는 노래","lens":"성전에 오르는 노래부터 할렐루야로 끝나는 시편의 결말 보기","note":"","reading":"시편 120–129","estimatedVerses":164,"estimatedMinutes":32},{"id":151,"phase":8,"phaseTitle":"8. 귀환과 재건","phaseSubtitle":"성전·성벽·말씀을 다시 세우다","unit":"시편 5권: 성전에 오르는 노래","lens":"성전에 오르는 노래부터 할렐루야로 끝나는 시편의 결말 보기","note":"","reading":"시편 130–139","estimatedVerses":164,"estimatedMinutes":32},{"id":152,"phase":8,"phaseTitle":"8. 귀환과 재건","phaseSubtitle":"성전·성벽·말씀을 다시 세우다","unit":"시편 5권: 성전에 오르는 노래","lens":"성전에 오르는 노래부터 할렐루야로 끝나는 시편의 결말 보기","note":"","reading":"시편 140–150","estimatedVerses":180,"estimatedMinutes":35},{"id":153,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"탄생과 사역 준비","lens":"탄생·세례·시험을 여러 복음서의 시선으로 겹쳐 보기","note":"","reading":"누가복음 1–2","estimatedVerses":128,"estimatedMinutes":25},{"id":154,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"탄생과 사역 준비","lens":"탄생·세례·시험을 여러 복음서의 시선으로 겹쳐 보기","note":"","reading":"누가복음 3 · 마태복음 1–2","estimatedVerses":124,"estimatedMinutes":24},{"id":155,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"탄생과 사역 준비","lens":"탄생·세례·시험을 여러 복음서의 시선으로 겹쳐 보기","note":"","reading":"마태복음 3–4 · 요한복음 1","estimatedVerses":118,"estimatedMinutes":23},{"id":156,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"갈릴리 사역의 시작","lens":"하나님 나라 선포와 제자 부르심, 산상수훈의 윤리 보기","note":"","reading":"마가복음 1–3 · 누가복음 4","estimatedVerses":175,"estimatedMinutes":34},{"id":157,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"갈릴리 사역의 시작","lens":"하나님 나라 선포와 제자 부르심, 산상수훈의 윤리 보기","note":"","reading":"누가복음 5–6 · 마태복음 5–6","estimatedVerses":172,"estimatedMinutes":33},{"id":158,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"갈릴리 사역의 시작","lens":"하나님 나라 선포와 제자 부르심, 산상수훈의 윤리 보기","note":"","reading":"마태복음 7 · 요한복음 2–4","estimatedVerses":164,"estimatedMinutes":32},{"id":159,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"권능과 제자 훈련","lens":"기적 자체보다 예수의 정체와 제자들의 이해가 어떻게 자라는지 보기","note":"","reading":"마가복음 4–7","estimatedVerses":170,"estimatedMinutes":33},{"id":160,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"권능과 제자 훈련","lens":"기적 자체보다 예수의 정체와 제자들의 이해가 어떻게 자라는지 보기","note":"","reading":"마가복음 8 · 마태복음 8–10","estimatedVerses":157,"estimatedMinutes":30},{"id":161,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"권능과 제자 훈련","lens":"기적 자체보다 예수의 정체와 제자들의 이해가 어떻게 자라는지 보기","note":"","reading":"마태복음 11–14","estimatedVerses":153,"estimatedMinutes":30},{"id":162,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"권능과 제자 훈련","lens":"기적 자체보다 예수의 정체와 제자들의 이해가 어떻게 자라는지 보기","note":"","reading":"마태복음 15–16 · 누가복음 7–8","estimatedVerses":172,"estimatedMinutes":33},{"id":163,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"권능과 제자 훈련","lens":"기적 자체보다 예수의 정체와 제자들의 이해가 어떻게 자라는지 보기","note":"","reading":"누가복음 9 · 요한복음 5–6","estimatedVerses":161,"estimatedMinutes":31},{"id":164,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"예루살렘을 향한 길","lens":"십자가를 향하는 길에서 제자도·섬김·믿음의 의미 보기","note":"","reading":"마가복음 9–10 · 마태복음 17–18","estimatedVerses":161,"estimatedMinutes":31},{"id":165,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"예루살렘을 향한 길","lens":"십자가를 향하는 길에서 제자도·섬김·믿음의 의미 보기","note":"","reading":"마태복음 19–20 · 누가복음 10","estimatedVerses":124,"estimatedMinutes":24},{"id":166,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"예루살렘을 향한 길","lens":"십자가를 향하는 길에서 제자도·섬김·믿음의 의미 보기","note":"","reading":"누가복음 11–13","estimatedVerses":144,"estimatedMinutes":28},{"id":167,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"예루살렘을 향한 길","lens":"십자가를 향하는 길에서 제자도·섬김·믿음의 의미 보기","note":"","reading":"누가복음 14–16","estimatedVerses":144,"estimatedMinutes":28},{"id":168,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"예루살렘을 향한 길","lens":"십자가를 향하는 길에서 제자도·섬김·믿음의 의미 보기","note":"","reading":"누가복음 17–18 · 요한복음 7","estimatedVerses":138,"estimatedMinutes":27},{"id":169,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"예루살렘을 향한 길","lens":"십자가를 향하는 길에서 제자도·섬김·믿음의 의미 보기","note":"","reading":"요한복음 8–11","estimatedVerses":167,"estimatedMinutes":32},{"id":170,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"입성과 마지막 논쟁","lens":"예루살렘 입성 후 왕권·성전·종말 논쟁을 네 복음서 흐름으로 보기","note":"","reading":"마가복음 11–13 · 마태복음 21","estimatedVerses":165,"estimatedMinutes":32},{"id":171,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"입성과 마지막 논쟁","lens":"예루살렘 입성 후 왕권·성전·종말 논쟁을 네 복음서 흐름으로 보기","note":"","reading":"마태복음 22–25","estimatedVerses":153,"estimatedMinutes":30},{"id":172,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"입성과 마지막 논쟁","lens":"예루살렘 입성 후 왕권·성전·종말 논쟁을 네 복음서 흐름으로 보기","note":"","reading":"누가복음 19–21 · 요한복음 12","estimatedVerses":186,"estimatedMinutes":36},{"id":173,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"마지막 밤","lens":"발 씻김·새 계명·보혜사 약속을 십자가 직전의 유언처럼 읽기","note":"","reading":"요한복음 13–17","estimatedVerses":209,"estimatedMinutes":41},{"id":174,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"십자가와 부활","lens":"네 복음서가 공통으로 증언하는 죽음과 부활을 서로 비교하며 읽기","note":"","reading":"마가복음 14–16","estimatedVerses":127,"estimatedMinutes":25},{"id":175,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"십자가와 부활","lens":"네 복음서가 공통으로 증언하는 죽음과 부활을 서로 비교하며 읽기","note":"","reading":"마태복음 26–28","estimatedVerses":152,"estimatedMinutes":29},{"id":176,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"십자가와 부활","lens":"네 복음서가 공통으로 증언하는 죽음과 부활을 서로 비교하며 읽기","note":"","reading":"누가복음 22–24","estimatedVerses":144,"estimatedMinutes":28},{"id":177,"phase":9,"phaseTitle":"9. 예수와 네 복음서","phaseSubtitle":"네 증언을 시간 흐름에 맞춰 겹쳐 읽기","unit":"십자가와 부활","lens":"네 복음서가 공통으로 증언하는 죽음과 부활을 서로 비교하며 읽기","note":"","reading":"요한복음 18–21","estimatedVerses":167,"estimatedMinutes":32},{"id":178,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"예루살렘 교회","lens":"성령 강림·공동체·박해·스데반의 증언을 따라가기","note":"야고보서의 정확한 집필 연대는 논쟁이 있어, 초기 유대교회 맥락에서 읽기 좋도록 배치했습니다.","reading":"사도행전 1–5","estimatedVerses":180,"estimatedMinutes":35},{"id":179,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"예루살렘 교회","lens":"성령 강림·공동체·박해·스데반의 증언을 따라가기","note":"야고보서의 정확한 집필 연대는 논쟁이 있어, 초기 유대교회 맥락에서 읽기 좋도록 배치했습니다.","reading":"사도행전 6–7 · 야고보서 1–5","estimatedVerses":180,"estimatedMinutes":35},{"id":180,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"복음이 경계를 넘다","lens":"사마리아와 이방인에게 복음이 확장되는 전환점 보기","note":"","reading":"사도행전 8–12","estimatedVerses":180,"estimatedMinutes":35},{"id":181,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"첫 선교와 복음의 본질","lens":"이방 선교와 율법 논쟁 속에서 은혜의 복음이 무엇인지 보기","note":"","reading":"사도행전 13–15 · 갈라디아서 1","estimatedVerses":133,"estimatedMinutes":26},{"id":182,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"첫 선교와 복음의 본질","lens":"이방 선교와 율법 논쟁 속에서 은혜의 복음이 무엇인지 보기","note":"","reading":"갈라디아서 2–6","estimatedVerses":124,"estimatedMinutes":24},{"id":183,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"마게도냐·아가야 선교","lens":"새 교회들의 탄생과 재림 소망 속 일상 신앙 보기","note":"","reading":"사도행전 16–18 · 데살로니가전서 1","estimatedVerses":126,"estimatedMinutes":24},{"id":184,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"마게도냐·아가야 선교","lens":"새 교회들의 탄생과 재림 소망 속 일상 신앙 보기","note":"","reading":"데살로니가전서 2–5 · 데살로니가후서 1–3","estimatedVerses":118,"estimatedMinutes":23},{"id":185,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"에베소와 고린도","lens":"복음이 도시 문화와 교회의 실제 문제를 어떻게 다루는지 보기","note":"","reading":"사도행전 19–20 · 고린도전서 1–4","estimatedVerses":181,"estimatedMinutes":35},{"id":186,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"에베소와 고린도","lens":"복음이 도시 문화와 교회의 실제 문제를 어떻게 다루는지 보기","note":"","reading":"고린도전서 5–10","estimatedVerses":164,"estimatedMinutes":32},{"id":187,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"에베소와 고린도","lens":"복음이 도시 문화와 교회의 실제 문제를 어떻게 다루는지 보기","note":"","reading":"고린도전서 11–16","estimatedVerses":164,"estimatedMinutes":32},{"id":188,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"갈등을 지나 로마 복음으로","lens":"사도직 논쟁과 복음의 체계적 설명을 이어 읽기","note":"","reading":"고린도후서 1–9","estimatedVerses":178,"estimatedMinutes":34},{"id":189,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"갈등을 지나 로마 복음으로","lens":"사도직 논쟁과 복음의 체계적 설명을 이어 읽기","note":"","reading":"고린도후서 10–13 · 로마서 1–3","estimatedVerses":160,"estimatedMinutes":31},{"id":190,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"갈등을 지나 로마 복음으로","lens":"사도직 논쟁과 복음의 체계적 설명을 이어 읽기","note":"","reading":"로마서 4–9","estimatedVerses":162,"estimatedMinutes":31},{"id":191,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"갈등을 지나 로마 복음으로","lens":"사도직 논쟁과 복음의 체계적 설명을 이어 읽기","note":"","reading":"로마서 10–16","estimatedVerses":189,"estimatedMinutes":37},{"id":192,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"예루살렘에서 로마까지","lens":"붙잡힌 바울의 여정 속에서도 복음이 막히지 않는 결말 보기","note":"","reading":"사도행전 21–24","estimatedVerses":144,"estimatedMinutes":28},{"id":193,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"예루살렘에서 로마까지","lens":"붙잡힌 바울의 여정 속에서도 복음이 막히지 않는 결말 보기","note":"","reading":"사도행전 25–28","estimatedVerses":144,"estimatedMinutes":28},{"id":194,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"옥중서신","lens":"그리스도 안의 새 공동체·기쁨·화해를 감옥에서 쓴 편지로 읽기","note":"","reading":"에베소서 1–5","estimatedVerses":129,"estimatedMinutes":25},{"id":195,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"옥중서신","lens":"그리스도 안의 새 공동체·기쁨·화해를 감옥에서 쓴 편지로 읽기","note":"","reading":"에베소서 6 · 골로새서 1–4","estimatedVerses":121,"estimatedMinutes":23},{"id":196,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"옥중서신","lens":"그리스도 안의 새 공동체·기쁨·화해를 감옥에서 쓴 편지로 읽기","note":"","reading":"빌레몬서 1 · 빌립보서 1–4","estimatedVerses":129,"estimatedMinutes":25},{"id":197,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"목회와 공동체 질서","lens":"교회를 세우고 지도자를 세우는 실제 원리 보기","note":"","reading":"디모데전서 1–6 · 디도서 1–3","estimatedVerses":159,"estimatedMinutes":31},{"id":198,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"바울의 마지막 부탁","lens":"복음 전파를 다음 세대에 맡기는 유언처럼 읽기","note":"","reading":"디모데후서 1–4","estimatedVerses":83,"estimatedMinutes":18},{"id":199,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"히브리서","lens":"예수의 대제사장직과 새 언약을 구약 전체의 성취로 읽기","note":"","reading":"히브리서 1–7","estimatedVerses":163,"estimatedMinutes":32},{"id":200,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"히브리서","lens":"예수의 대제사장직과 새 언약을 구약 전체의 성취로 읽기","note":"","reading":"히브리서 8–13","estimatedVerses":140,"estimatedMinutes":27},{"id":201,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"흩어진 교회에게","lens":"고난·거짓 가르침·끝까지 견딤을 다룬 공동서신 묶음으로 읽기","note":"","reading":"베드로전서 1–5 · 베드로후서 1–3 · 유다서 1","estimatedVerses":191,"estimatedMinutes":37},{"id":202,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"요한 공동체의 마지막 권면","lens":"사랑·진리·확신을 짧은 편지들로 정리하기","note":"","reading":"요한일서 1–5 · 요한이서 1 · 요한삼서 1","estimatedVerses":132,"estimatedMinutes":26},{"id":203,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"요한계시록","lens":"두려운 암호책보다 “어린양이 승리한다”는 예배와 소망의 책으로 읽기","note":"","reading":"요한계시록 1–7","estimatedVerses":129,"estimatedMinutes":25},{"id":204,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"요한계시록","lens":"두려운 암호책보다 “어린양이 승리한다”는 예배와 소망의 책으로 읽기","note":"","reading":"요한계시록 8–14","estimatedVerses":129,"estimatedMinutes":25},{"id":205,"phase":10,"phaseTitle":"10. 교회와 서신","phaseSubtitle":"사도행전의 흐름 속에 편지를 끼워 읽기","unit":"요한계시록","lens":"두려운 암호책보다 “어린양이 승리한다”는 예배와 소망의 책으로 읽기","note":"","reading":"요한계시록 15–22","estimatedVerses":147,"estimatedMinutes":28}];
+const phaseCounts = {"1": 17, "2": 29, "3": 9, "4": 23, "5": 18, "6": 31, "7": 12, "8": 13, "9": 25, "10": 28};
+const LS_PREFIX = 'bible30_v1_';
+const calendar = document.getElementById('calendar');
+const detail = document.getElementById('detail');
+
+function doneKey(id){ return LS_PREFIX + 'done_' + id; }
+function endpointKey(id){ return LS_PREFIX + 'endpoint_' + id; }
+function isDone(id){ return localStorage.getItem(doneKey(id)) === '1'; }
+function pad(n){ return String(n).padStart(2,'0'); }
+function localDateKey(d=new Date()){
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function readDailyLog(){
+  try { return JSON.parse(localStorage.getItem(LS_PREFIX+'daily') || '{}'); }
+  catch(e){ return {}; }
+}
+function writeDailyLog(x){ localStorage.setItem(LS_PREFIX+'daily', JSON.stringify(x)); }
+
+function markToday(value=true){
+  const log=readDailyLog(), key=localDateKey();
+  if(value) log[key]=1; else delete log[key];
+  writeDailyLog(log); updateProgress(); updateTodayButton();
+}
+function calcStreak(){
+  const log=readDailyLog();
+  let d=new Date();
+  if(!log[localDateKey(d)]) d.setDate(d.getDate()-1);
+  let count=0;
+  while(log[localDateKey(d)]){ count++; d.setDate(d.getDate()-1); }
+  return count;
+}
+function updateProgress(){
+  const completed=sessions.filter(s=>isDone(s.id)).length;
+  const pct=Math.round(completed/sessions.length*100);
+  const daily=readDailyLog();
+  document.getElementById('rangeCount').textContent=`${completed}/${sessions.length}`;
+  document.getElementById('daysCount').textContent=`${Object.keys(daily).length}일`;
+  document.getElementById('streakCount').textContent=`${calcStreak()}일`;
+  document.getElementById('progressBar').style.width=pct+'%';
+  document.getElementById('progressPct').textContent=pct+'%';
+  document.querySelectorAll('.date-btn').forEach(b=>b.classList.toggle('done',isDone(Number(b.dataset.id))));
+}
+function updateTodayButton(){
+  const btn=document.getElementById('todayDone');
+  const done=!!readDailyLog()[localDateKey()];
+  btn.classList.toggle('done',done);
+  btn.textContent=done?'오늘 30분 완료 ✓':'오늘 30분 읽음';
+}
+
+function renderCalendar(){
+  const phaseMap=new Map();
+  sessions.forEach(s=>{
+    if(!phaseMap.has(s.phase)) phaseMap.set(s.phase,[]);
+    phaseMap.get(s.phase).push(s);
+  });
+  phaseMap.forEach((list,phase)=>{
+    const title=document.createElement('div');
+    title.className='phase-title';
+    title.innerHTML=`<span>${list[0].phaseTitle}</span><small>${list.length}회</small>`;
+    calendar.appendChild(title);
+    const sub=document.createElement('div');
+    sub.className='phase-subtitle';
+    sub.textContent=list[0].phaseSubtitle;
+    calendar.appendChild(sub);
+    const row=document.createElement('div'); row.className='dates';
+    list.forEach(s=>{
+      const b=document.createElement('button');
+      b.className='date-btn'; b.dataset.id=s.id; b.textContent=`${s.id}회`;
+      if(isDone(s.id)) b.classList.add('done');
+      b.onclick=()=>showSession(s.id);
+      row.appendChild(b);
+    });
+    calendar.appendChild(row);
+  });
+}
+
+function lengthLabel(min){
+  if(min<=24) return '가벼운 편';
+  if(min>=35) return '조금 긴 편';
+  return '표준';
+}
+function showSession(id){
+  const s=sessions.find(x=>x.id===Number(id)); if(!s) return;
+  localStorage.setItem(LS_PREFIX+'last',String(s.id));
+  document.querySelectorAll('.date-btn').forEach(b=>{
+    const active=Number(b.dataset.id)===s.id;
+    b.classList.toggle('active',active);
+    if(active) b.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+  });
+  detail.innerHTML='';
+  const card=document.createElement('section'); card.className='card detail';
+  const noteHtml=s.note?`<div class="note">${escapeHtml(s.note)}</div>`:'';
+  card.innerHTML=`
+    <div class="badge">PHASE ${s.phase} · ${s.id}/${sessions.length}</div>
+    <h2>${escapeHtml(s.unit)}</h2>
+    <div class="date-line">${escapeHtml(s.phaseSubtitle)}</div>
+    <div class="reading-box">
+      <div class="reading-label">오늘의 권장 범위</div>
+      <div class="reading-main">${escapeHtml(s.reading)}</div>
+      <div class="reading-est">평균 속도 기준 30분 안팎의 참고 범위 · 30분이 되면 멈춰도 됩니다</div>
+    </div>
+    <div class="section">
+      <div class="section-name">읽는 관점</div>
+      <div class="section-desc">${escapeHtml(s.lens)}</div>
+    </div>
+    ${noteHtml}
+    <div class="endpoint">
+      <label for="endpointInput">30분 시점 실제 종료 지점 (선택)</label>
+      <input id="endpointInput" inputmode="text" autocomplete="off" placeholder="예: 창세기 5:18 / 시편 23편까지">
+    </div>
+    <div class="completion">
+      <div class="check" id="sessionCheck"></div>
+      <div><b>권장 범위를 끝까지 읽었습니다</b><span>30분 실천 체크와 별개입니다. 범위를 다 읽었을 때만 완료하면 전체 1독 진행률이 정확해집니다.</span></div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn" id="prevBtn" ${s.id===1?'disabled':''}>이전 회차</button>
+      <button class="nav-btn" id="nextBtn" ${s.id===sessions.length?'disabled':''}>다음 회차</button>
+    </div>`;
+  detail.appendChild(card);
+
+  const input=document.getElementById('endpointInput');
+  input.value=localStorage.getItem(endpointKey(s.id))||'';
+  input.oninput=()=>localStorage.setItem(endpointKey(s.id),input.value);
+
+  const c=document.getElementById('sessionCheck');
+  function paint(){ const d=isDone(s.id); c.classList.toggle('done',d); c.textContent=d?'✓':''; }
+  paint();
+  c.onclick=()=>{
+    const next=!isDone(s.id); localStorage.setItem(doneKey(s.id),next?'1':'0');
+    paint(); updateProgress();
+    if(next && s.id<sessions.length){ setTimeout(()=>showSession(s.id+1),180); }
+  };
+  document.getElementById('prevBtn').onclick=()=>showSession(s.id-1);
+  document.getElementById('nextBtn').onclick=()=>showSession(s.id+1);
+}
+function escapeHtml(str){
+  return String(str).replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#039;','"':'&quot;'}[m]));
+}
+function openNextIncomplete(){
+  const s=sessions.find(x=>!isDone(x.id)) || sessions[sessions.length-1];
+  showSession(s.id);
+  setTimeout(()=>detail.scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+// 30-minute timer, persistent across reloads
+const TIMER_TOTAL=30*60;
+let tickHandle=null;
+function timerState(){
+  try{return JSON.parse(localStorage.getItem(LS_PREFIX+'timer')||'null')||{running:false,remaining:TIMER_TOTAL,endAt:null};}
+  catch(e){return{running:false,remaining:TIMER_TOTAL,endAt:null};}
+}
+function saveTimer(s){localStorage.setItem(LS_PREFIX+'timer',JSON.stringify(s));}
+function currentRemaining(s){
+  if(!s.running) return Math.max(0,s.remaining ?? TIMER_TOTAL);
+  return Math.max(0,Math.ceil((s.endAt-Date.now())/1000));
+}
+function paintTimer(){
+  let s=timerState(), rem=currentRemaining(s);
+  if(s.running && rem<=0){
+    s={running:false,remaining:0,endAt:null}; saveTimer(s); markToday(true);
+    if(tickHandle){clearInterval(tickHandle); tickHandle=null;}
+  }
+  document.getElementById('timerDisplay').textContent=`${pad(Math.floor(rem/60))}:${pad(rem%60)}`;
+  document.getElementById('timerStart').textContent=s.running?'진행 중':'시작';
+  document.getElementById('timerStart').disabled=s.running;
+}
+function startTimer(){
+  let s=timerState(), rem=currentRemaining(s);
+  if(rem<=0) rem=TIMER_TOTAL;
+  s={running:true,remaining:rem,endAt:Date.now()+rem*1000}; saveTimer(s);
+  if(tickHandle) clearInterval(tickHandle); tickHandle=setInterval(paintTimer,500); paintTimer();
+}
+function pauseTimer(){
+  let s=timerState(), rem=currentRemaining(s);
+  saveTimer({running:false,remaining:rem,endAt:null});
+  if(tickHandle){clearInterval(tickHandle); tickHandle=null;} paintTimer();
+}
+function resetTimer(){
+  saveTimer({running:false,remaining:TIMER_TOTAL,endAt:null});
+  if(tickHandle){clearInterval(tickHandle); tickHandle=null;} paintTimer();
+}
+function restoreTimer(){
+  const s=timerState(); if(s.running) tickHandle=setInterval(paintTimer,500); paintTimer();
+}
+
+// Backup / restore / install helpers
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer=setTimeout(()=>el.classList.remove('show'),2200);
+}
+function collectAppData(){
+  const data={};
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k && k.startsWith(LS_PREFIX)) data[k]=localStorage.getItem(k);
+  }
+  return {app:'bible30',version:1,exportedAt:new Date().toISOString(),data};
+}
+function exportBackup(){
+  const payload=collectAppData();
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`bible30_backup_${localDateKey()}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  toast('백업 파일을 저장했습니다.');
+}
+function restoreBackup(file){
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      const payload=JSON.parse(r.result);
+      if(!payload || payload.app!=='bible30' || !payload.data || typeof payload.data!=='object') throw new Error('invalid');
+      Object.entries(payload.data).forEach(([k,v])=>{
+        if(k.startsWith(LS_PREFIX)) localStorage.setItem(k,String(v));
+      });
+      toast('기록을 복원했습니다.');
+      setTimeout(()=>location.reload(),500);
+    }catch(e){
+      alert('이 앱에서 만든 올바른 백업 파일이 아닙니다.');
+    }
+  };
+  r.readAsText(file);
+}
+function resetAllData(){
+  if(!confirm('체크, 메모, 타이머를 포함한 모든 기록을 이 기기에서 지울까요?\n백업하지 않았다면 되돌릴 수 없습니다.')) return;
+  const keys=[];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i); if(k && k.startsWith(LS_PREFIX)) keys.push(k);
+  }
+  keys.forEach(k=>localStorage.removeItem(k));
+  location.reload();
+}
+
+document.getElementById('exportData').onclick=exportBackup;
+document.getElementById('importData').onclick=()=>document.getElementById('importFile').click();
+document.getElementById('importFile').onchange=e=>{ const f=e.target.files&&e.target.files[0]; if(f) restoreBackup(f); e.target.value=''; };
+document.getElementById('resetData').onclick=resetAllData;
+
+let deferredInstallPrompt=null;
+const installBtn=document.getElementById('installBtn');
+const installHint=document.getElementById('installHint');
+const isStandalone=window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;
+const isiOS=/iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+if(isStandalone){
+  document.getElementById('installCard').hidden=true;
+}else if(isiOS){
+  installHint.textContent='Safari에서 공유 → 홈 화면에 추가 → “웹 앱으로 열기”를 켜면 앱처럼 사용할 수 있습니다.';
+  installBtn.textContent='방법 보기';
+  installBtn.onclick=()=>alert('iPhone / iPad\n\nSafari로 이 페이지를 연 뒤\n1. 공유 버튼\n2. 홈 화면에 추가\n3. “웹 앱으로 열기” 켜기\n4. 추가');
+}else{
+  installHint.textContent='Android Chrome에서는 메뉴의 “설치 및 바로가기 만들기” 또는 “앱 설치”로 홈 화면에 추가할 수 있습니다.';
+}
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault(); deferredInstallPrompt=e;
+  installBtn.textContent='앱 설치';
+  installBtn.onclick=async()=>{
+    if(!deferredInstallPrompt){ toast('브라우저 메뉴에서 앱 설치를 선택하세요.'); return; }
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt=null;
+  };
+});
+if(!installBtn.onclick && !isiOS){
+  installBtn.onclick=()=>alert('Android Chrome\n\n오른쪽 위 ⋮ 메뉴 → “설치 및 바로가기 만들기” 또는 “앱 설치”를 선택하세요.');
+}
+window.addEventListener('appinstalled',()=>{ document.getElementById('installCard').hidden=true; toast('홈 화면에 설치되었습니다.'); });
+
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+  window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js').catch(()=>{}));
+}
+
+document.getElementById('timerStart').onclick=startTimer;
+document.getElementById('timerPause').onclick=pauseTimer;
+document.getElementById('timerReset').onclick=resetTimer;
+document.getElementById('todayDone').onclick=()=>{
+  const log=readDailyLog(), key=localDateKey(); markToday(!log[key]);
+};
+document.getElementById('nextIncomplete').onclick=openNextIncomplete;
+
+renderCalendar();
+updateProgress(); updateTodayButton(); restoreTimer();
+const saved=Number(localStorage.getItem(LS_PREFIX+'last'));
+const firstIncomplete=sessions.find(x=>!isDone(x.id));
+showSession(saved || (firstIncomplete?firstIncomplete.id:1));
+</script>
+</body>
+</html>
